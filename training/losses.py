@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import torch
 from torch import nn
 
@@ -21,4 +23,4 @@ def vp_score_matching(
     target = -(xt - m[:, None] * x0) / (sig[:, None] ** 2)
     score = model(xt, t)
     loss = ((score - target) ** 2).sum(dim=1) * (sig**2)
-    return loss.mean()
+    return cast(torch.Tensor, loss.mean())

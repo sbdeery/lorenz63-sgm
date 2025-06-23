@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 import torch
-from torch import optim
+from torch import Tensor, optim
 from torch.utils.data import DataLoader, TensorDataset, random_split
 from tqdm import tqdm
 
@@ -16,7 +16,7 @@ from training.losses import vp_score_matching
 from utils.logger import Logger
 
 
-def main():
+def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--data", required=True)
     p.add_argument("--epochs", type=int, default=50)
@@ -46,9 +46,9 @@ def main():
         model.train()
         for (x,) in tqdm(train_loader, desc=f"Epoch {epoch}"):
             x = x.to(device)
-            loss = vp_score_matching(model, x)
+            loss: Tensor = vp_score_matching(model, x)
             opt.zero_grad()
-            loss.backward()
+            loss.backward()  # type: ignore[no-untyped-call]
             opt.step()
             ema.update()
         logger.log_metrics(epoch, {"loss": float(loss)}, split="train")

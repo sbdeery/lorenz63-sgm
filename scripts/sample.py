@@ -15,9 +15,11 @@ from __future__ import annotations
 
 import argparse
 import pathlib
+from typing import Callable, Tuple, Union, cast
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from models.mlp import ScoreMLP
 from sampling.em import em_sampler
@@ -25,7 +27,7 @@ from sampling.ode import ode_sampler
 from sampling.pc import pc_sampler
 
 
-def main():
+def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument(
         "--ckpt", required=True, type=pathlib.Path, help="Path to model checkpoint"
@@ -51,20 +53,30 @@ def main():
     model.load_state_dict(ckpt["model"])
     model.eval()
 
-    def score_fn(x: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
-        return model(x, t)
+    # score function: input (B,3), (B,) → output (B,3)
+    def score_fn(x: Tensor, t: Tensor) -> Tensor:
+        # model(x,t) stub is untyped, so cast to Tensor
+        return cast(Tensor, model(x, t))
 
     # Select sampler -------------------------------------------------------
-    SAMPLERS = dict(ode=ode_sampler, em=em_sampler, pc=pc_sampler)
-    sampler_fn = SAMPLERS[args.sample_type]
+    # all samplers have signature: (score_fn, ..., device) -> Tensor
+    SAMPLERS: dict[str, Callable[..., Tensor]] = {
+        "ode": ode_sampler,
+        "em": em_sampler,
+        "pc": pc_sampler,
+    }
+    sampler_fn: Callable[..., Tensor] = SAMPLERS[args.sample_type]
 
     with torch.no_grad():
-        result = sampler_fn(score_fn, batch_size=args.n, device=device)
+        raw_out = sampler_fn(score_fn, batch_size=args.n, device=device)
 
-    if isinstance(result, tuple):
-        samples_tensor = result[0]
+    # Extract first element if a tuple is returned
+    raw_samples: Union[Tensor, Tuple[Tensor, ...]] = raw_out
+    if isinstance(raw_samples, tuple):
+        first = raw_samples[0]
     else:
-        samples_tensor = result
+        first = raw_samples
+    samples_tensor: Tensor = first
 
     samples = samples_tensor.cpu().numpy()
 

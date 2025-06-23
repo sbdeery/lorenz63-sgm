@@ -2,14 +2,20 @@
 
 from __future__ import annotations
 
-from typing import Union
+from typing import Callable, Union
 
 import torch
+from torch import Tensor
 
 from training.schedule import linear_beta_schedule
 
 
-def langevin_step(x, t, score_fn, snr):
+def langevin_step(
+    x: Tensor,
+    t: Tensor,
+    score_fn: Callable[[Tensor, Tensor], Tensor],
+    snr: float,
+) -> Tensor:
     noise = torch.randn_like(x)
     grad = score_fn(x, t)
     noise_norm = noise.norm(p=2, dim=1).mean()
@@ -20,14 +26,14 @@ def langevin_step(x, t, score_fn, snr):
 
 
 def pc_sampler(
-    score_fn,
+    score_fn: Callable[[Tensor, Tensor], Tensor],
     steps: int = 5000,
     snr: float = 0.16,
     corrector_steps: int = 1,
     batch_size: int = 64,
     eps: float = 1e-3,
     device: Union[str, torch.device] = "cpu",
-):
+) -> Tensor:
     ts = torch.linspace(1.0, eps, steps, device=device)
     x = torch.randn(batch_size, 3, device=device)
     for i in range(steps - 1):

@@ -21,7 +21,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import plotly.express as px
+import plotly.express as px  # type: ignore[import-untyped]
 import torch
 
 from training.schedule import m_t, sigma

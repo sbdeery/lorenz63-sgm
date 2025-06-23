@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from typing import cast
 
 import torch
 import torch.nn.functional as F
@@ -35,7 +36,7 @@ class ResidualBlock(nn.Module):
         h = F.silu(self.fc1(h))
         h = self.norm2(h)
         h = self.fc2(h)
-        return x + h
+        return cast(torch.Tensor, x + h)
 
 
 class ScoreMLP(nn.Module):
@@ -60,4 +61,4 @@ class ScoreMLP(nn.Module):
         h = self.fc_in(x) + emb
         for block in self.blocks:
             h = block(h + emb)  # FiLM-like conditioning
-        return self.fc_out(h)
+        return cast(torch.Tensor, self.fc_out(h))

@@ -15,7 +15,7 @@ import argparse
 from pathlib import Path
 
 import numpy as np
-import plotly.graph_objs as go
+import plotly.graph_objs as go  # type: ignore[import-untyped]
 
 from utils.preprocess import unwhiten
 

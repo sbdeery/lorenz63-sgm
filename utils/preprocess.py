@@ -4,12 +4,14 @@ from __future__ import annotations
 import json
 from functools import lru_cache
 from pathlib import Path
+from typing import cast
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 @lru_cache(maxsize=4)
-def _load_stats(stats_path: Path) -> tuple[np.ndarray, np.ndarray]:
+def _load_stats(stats_path: Path) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
     """Cache the whitening stats so we hit disk only once."""
     stats = json.loads(stats_path.read_text())
     mu = np.asarray(stats["mu"], dtype=np.float64)  # (3,)
@@ -17,7 +19,7 @@ def _load_stats(stats_path: Path) -> tuple[np.ndarray, np.ndarray]:
     return mu, inv
 
 
-def unwhiten(arr: np.ndarray, stats_path: Path | None) -> np.ndarray:
+def unwhiten(arr: NDArray[np.float32], stats_path: Path | None) -> NDArray[np.float32]:
     """
     Invert the whitening transform:
 
@@ -39,4 +41,4 @@ def unwhiten(arr: np.ndarray, stats_path: Path | None) -> np.ndarray:
 
     mu, inv = _load_stats(stats_path)
     raw = arr @ np.linalg.inv(inv) + mu  # (N,3)
-    return raw.astype(np.float32, copy=False)
+    return cast(NDArray[np.float32], raw.astype(np.float32, copy=False))

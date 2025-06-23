@@ -16,7 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Sequence, Tuple, Union, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,7 +29,7 @@ from utils.preprocess import unwhiten
 # ---------------------------------------------------------------------
 
 
-def gaussian_kde_silverman(data: np.ndarray) -> gaussian_kde:  # type: ignore[valid-type]
+def gaussian_kde_silverman(data: np.ndarray) -> gaussian_kde:
     """Gaussian KDE with Silverman bandwidth."""
     return gaussian_kde(data.astype(np.float64), bw_method="silverman")
 
@@ -44,10 +44,15 @@ def kde_mse(true: np.ndarray, gen: np.ndarray, num_pts: int = 512) -> float:
 
 
 def compute_metrics(true: np.ndarray, gen: np.ndarray) -> Tuple[float, float, float]:
-    ks, _ = ks_2samp(true, gen)
-    w1 = wasserstein_distance(true, gen)
-    mse = kde_mse(true, gen)
-    return ks, w1, mse  # type: ignore[return-value]
+    """
+    Compute Kolmogorov–Smirnov, Wasserstein-1, and KDE‐MSE metrics
+    between two 1-D samples.
+    """
+    raw: Sequence[float] = cast(Sequence[float], ks_2samp(true, gen))
+    ks: float = raw[0]
+    w1: float = float(wasserstein_distance(true, gen))
+    mse: float = float(kde_mse(true, gen))
+    return ks, w1, mse
 
 
 def plot_axis(
@@ -62,7 +67,7 @@ def plot_axis(
 
     combined = np.concatenate([true, gen])
     _, edges = np.histogram(combined, bins=bins, density=True)
-    edges_list: list[float] = edges.tolist()  # type: ignore[arg-type]
+    edges_list = cast(list[float], edges.tolist())
 
     plt.figure(figsize=(5, 4))
     plt.hist(

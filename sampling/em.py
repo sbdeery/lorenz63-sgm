@@ -2,20 +2,24 @@
 
 from __future__ import annotations
 
-from typing import Union
+from typing import Callable, Union
 
 import torch
+from torch import Tensor
 
 from training.schedule import linear_beta_schedule
 
 
 def em_sampler(
-    score_fn,
+    score_fn: Callable[[Tensor, Tensor], Tensor],
     steps: int = 20000,
     batch_size: int = 64,
     eps: float = 1e-3,
     device: Union[str, torch.device] = "cpu",
-):
+) -> Tensor:
+    """
+    Euler–Maruyama sampler for the reverse VP SDE.
+    """
     ts = torch.linspace(1.0, eps, steps, device=device)
     x = torch.randn(batch_size, 3, device=device)
     for i in range(steps - 1):

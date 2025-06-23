@@ -9,7 +9,7 @@ from typing import Dict
 try:
     from tensorboardX import SummaryWriter  # type: ignore
 except ImportError:  # Fallback
-    SummaryWriter = None  # type: ignore
+    SummaryWriter = None
 
 
 class Logger:
