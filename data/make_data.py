@@ -9,7 +9,7 @@ from typing import Tuple, cast
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy.integrate import solve_ivp
+from scipy.integrate import solve_ivp  # type: ignore[import-untyped]
 
 
 def lorenz(t: float, xyz: NDArray[np.float64]) -> NDArray[np.float64]:

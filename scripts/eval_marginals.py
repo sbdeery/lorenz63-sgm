@@ -20,7 +20,11 @@ from typing import Sequence, Tuple, Union, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import gaussian_kde, ks_2samp, wasserstein_distance
+from scipy.stats import (  # type: ignore[import-untyped]
+    gaussian_kde,
+    ks_2samp,
+    wasserstein_distance,
+)
 
 from utils.preprocess import unwhiten
 

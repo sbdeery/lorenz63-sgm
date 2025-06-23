@@ -8,7 +8,7 @@ from pathlib import Path
 import torch
 from torch import Tensor, optim
 from torch.utils.data import DataLoader, TensorDataset, random_split
-from tqdm import tqdm
+from tqdm import tqdm  # type: ignore[import-untyped]
 
 from models.ema import EMA
 from models.mlp import ScoreMLP
