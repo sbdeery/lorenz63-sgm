@@ -17,7 +17,6 @@ A minimal, type-annotated reference implementation of score-based generative mod
 - [Examples](#examples)
 - [Development](#development)
 - [Citation](#citation)
-- [License](#license)
 - [Contact](#contact)
 
 ## Installation
@@ -78,21 +77,12 @@ See `examples/minimal_demo.ipynb` for a complete walkthrough of data generation,
   flake8 .
   mypy .
   ```
-- **Testing:**
-  ```bash
-  pytest --cov
-  ```
-- **Continuous Integration:** See `.github/workflows/ci.yml`.
 
 ## Citation
 
 If you use this code, please cite:
 
 Song, Yang and Ermon, Stefano. *Score-Based Generative Modeling through Stochastic Differential Equations*. ICLR 2021.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contact
 

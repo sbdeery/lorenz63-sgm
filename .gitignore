@@ -1,1 +1,16 @@
-__pycache__/\n*.py[cod]\n.env\n.DS_Store\n
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual env
+.env/
+venv/
+env/
+
+# Data files
+data/
+outputs/
+
+# Logs
+*.log
