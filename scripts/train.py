@@ -1,15 +1,18 @@
-
 """Train score model."""
+
 from __future__ import annotations
-import argparse, torch
-from torch.utils.data import DataLoader, TensorDataset, random_split
-from torch import optim
-from tqdm import tqdm
+
+import argparse
 from pathlib import Path
 
+import torch
+from torch import optim
+from torch.utils.data import DataLoader, TensorDataset, random_split
+from tqdm import tqdm
+
+from models.ema import EMA
 from models.mlp import ScoreMLP
 from training.losses import vp_score_matching
-from models.ema import EMA
 from utils.logger import Logger
 
 
@@ -27,8 +30,12 @@ def main():
     ds = TensorDataset(arr)
     val_len = int(0.1 * len(ds))
     train_ds, val_ds = random_split(ds, [len(ds) - val_len, val_len])
-    train_loader = DataLoader(train_ds, batch_size=args.batch, shuffle=True, drop_last=True)
-    val_loader = DataLoader(val_ds, batch_size=args.batch, shuffle=False, drop_last=False)
+    train_loader = DataLoader(
+        train_ds, batch_size=args.batch, shuffle=True, drop_last=True
+    )
+    val_loader = DataLoader(
+        val_ds, batch_size=args.batch, shuffle=False, drop_last=False
+    )
 
     model = ScoreMLP().to(device)
     opt = optim.Adam(model.parameters(), lr=args.lr)
@@ -53,13 +60,16 @@ def main():
             for (x,) in val_loader:
                 x = x.to(device)
                 val_loss += vp_score_matching(model, x).item() * x.size(0)
-            val_loss /= len(val_loader.dataset) # type: ignore
+            val_loss /= len(val_loader.dataset)  # type: ignore
         logger.log_metrics(epoch, {"loss": val_loss}, split="val")
         ema.restore()
 
         ckpt_dir = Path(args.out) / "ckpts"
         ckpt_dir.mkdir(parents=True, exist_ok=True)
-        torch.save({"model": model.state_dict(), "ema": ema.shadow}, ckpt_dir / f"e{epoch:02d}.pt")
+        torch.save(
+            {"model": model.state_dict(), "ema": ema.shadow},
+            ckpt_dir / f"e{epoch:02d}.pt",
+        )
     logger.close()
 
 

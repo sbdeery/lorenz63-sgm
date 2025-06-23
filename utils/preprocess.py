@@ -1,8 +1,9 @@
 # utils/preprocess.py
 from __future__ import annotations
+
 import json
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 
@@ -11,8 +12,8 @@ import numpy as np
 def _load_stats(stats_path: Path) -> tuple[np.ndarray, np.ndarray]:
     """Cache the whitening stats so we hit disk only once."""
     stats = json.loads(stats_path.read_text())
-    mu  = np.asarray(stats["mu"], dtype=np.float64)          # (3,)
-    inv = np.asarray(stats["inv"], dtype=np.float64)         # (3,3)
+    mu = np.asarray(stats["mu"], dtype=np.float64)  # (3,)
+    inv = np.asarray(stats["inv"], dtype=np.float64)  # (3,3)
     return mu, inv
 
 
@@ -37,5 +38,5 @@ def unwhiten(arr: np.ndarray, stats_path: Path | None) -> np.ndarray:
         return arr.astype(np.float32, copy=False)
 
     mu, inv = _load_stats(stats_path)
-    raw = arr @ np.linalg.inv(inv) + mu              # (N,3)
+    raw = arr @ np.linalg.inv(inv) + mu  # (N,3)
     return raw.astype(np.float32, copy=False)

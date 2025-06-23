@@ -1,16 +1,18 @@
-
 """Residual MLP conditioned on time for score estimation."""
+
 from __future__ import annotations
+
 import math
 from typing import Tuple
 
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class GaussianFourierProjection(nn.Module):
     """Encode scalar time t with random Fourier features."""
+
     def __init__(self, embed_dim: int = 256, scale: float = 30.0) -> None:
         super().__init__()
         self.W = nn.Parameter(torch.randn(embed_dim // 2) * scale, requires_grad=False)
@@ -39,6 +41,7 @@ class ResidualBlock(nn.Module):
 
 class ScoreMLP(nn.Module):
     """Score network s_theta(x,t) -> ℝ³."""
+
     def __init__(self, hidden_dim: int = 128, num_blocks: int = 6) -> None:
         super().__init__()
         self.time_embed = GaussianFourierProjection(embed_dim=256)
@@ -48,7 +51,9 @@ class ScoreMLP(nn.Module):
             nn.Linear(hidden_dim, hidden_dim),
         )
         self.fc_in = nn.Linear(3, hidden_dim)
-        self.blocks = nn.ModuleList([ResidualBlock(hidden_dim) for _ in range(num_blocks)])
+        self.blocks = nn.ModuleList(
+            [ResidualBlock(hidden_dim) for _ in range(num_blocks)]
+        )
         self.fc_out = nn.Linear(hidden_dim, 3)
 
     def forward(self, x: torch.Tensor, t: torch.Tensor) -> torch.Tensor:

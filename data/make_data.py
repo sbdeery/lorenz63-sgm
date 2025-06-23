@@ -1,8 +1,11 @@
-
 """Generate Lorenz-63 or sphere dataset."""
+
 from __future__ import annotations
-import argparse, json
+
+import argparse
+import json
 from pathlib import Path
+
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -26,7 +29,11 @@ def gen_lorenz(n_seeds=1, dt=0.01, t_end=5000.0):
 
 def gen_sphere(n=300_000, radius=10.0):
     rng = np.random.default_rng()
-    u, theta, phi = rng.uniform(0, 1, n), rng.uniform(0, 2 * np.pi, n), rng.uniform(0, np.pi, n)
+    u, theta, phi = (
+        rng.uniform(0, 1, n),
+        rng.uniform(0, 2 * np.pi, n),
+        rng.uniform(0, np.pi, n),
+    )
     r = radius * u ** (1 / 3)
     x = r * np.sin(phi) * np.cos(theta)
     y = r * np.sin(phi) * np.sin(theta)
@@ -55,7 +62,10 @@ def main():
         raw = gen_sphere()
     data, mu, inv = whiten(raw.astype(np.float32))
     np.save(out / f"{args.dist}_train_norm.npy", data)
-    json.dump({"mu": mu.tolist(), "inv": inv.tolist()}, open(out / f"{args.dist}_stats.json", "w"))
+    json.dump(
+        {"mu": mu.tolist(), "inv": inv.tolist()},
+        open(out / f"{args.dist}_stats.json", "w"),
+    )
     print("Saved", data.shape, "to", out)
 
 

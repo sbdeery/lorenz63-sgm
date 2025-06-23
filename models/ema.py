@@ -1,16 +1,22 @@
-
 """Exponential Moving Average of parameters."""
+
 from __future__ import annotations
+
 import torch
 from torch import nn
 
 
 class EMA:
     """Maintain shadow copy of parameters."""
+
     def __init__(self, model: nn.Module, decay: float = 0.9999) -> None:
         self.model = model
         self.decay = decay
-        self.shadow = {k: p.detach().clone() for k, p in model.named_parameters() if p.requires_grad}
+        self.shadow = {
+            k: p.detach().clone()
+            for k, p in model.named_parameters()
+            if p.requires_grad
+        }
 
     @torch.no_grad()
     def update(self) -> None:

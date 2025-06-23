@@ -1,12 +1,23 @@
-
 """Probability flow ODE sampler."""
+
 from __future__ import annotations
-import torch
-from torchdiffeq import odeint
-from training.schedule import linear_beta_schedule
+
 from typing import Union
 
-def ode_sampler(score_fn, batch_size: int = 64, eps: float = 1e-3, device: Union[str, torch.device] ="cpu", atol=1e-5, rtol=1e-5):
+import torch
+from torchdiffeq import odeint
+
+from training.schedule import linear_beta_schedule
+
+
+def ode_sampler(
+    score_fn,
+    batch_size: int = 64,
+    eps: float = 1e-3,
+    device: Union[str, torch.device] = "cpu",
+    atol=1e-5,
+    rtol=1e-5,
+):
     def drift(t, x):
         t_tensor = torch.full((x.shape[0],), t, device=x.device)
         beta = linear_beta_schedule(t_tensor)[:, None]

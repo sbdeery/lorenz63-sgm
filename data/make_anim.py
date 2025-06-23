@@ -12,6 +12,7 @@ python -m data.make_anim \
     --out   outputs/animations/anim_raw.html \
     --frames 100 --sample 3000
 """
+
 from __future__ import annotations
 
 import argparse
@@ -23,7 +24,7 @@ import pandas as pd
 import plotly.express as px
 import torch
 
-from training.schedule import sigma, m_t
+from training.schedule import m_t, sigma
 from utils.preprocess import unwhiten
 
 
@@ -32,15 +33,18 @@ from utils.preprocess import unwhiten
 # ----------------------------------------------------------------------
 def forward_vp_step(
     x0: torch.Tensor,
-    t:  torch.Tensor,
+    t: torch.Tensor,
     *,
     generator: torch.Generator | None = None,
 ) -> torch.Tensor:
     """x(t) = m(t)·x0 + σ(t)·ε  with ε ~ N(0, I)."""
     sig = sigma(t)[:, None]
-    m   = m_t(t)[:, None]
-    eps = torch.randn(x0.shape, generator=generator, device=x0.device) \
-          if generator else torch.randn_like(x0)
+    m = m_t(t)[:, None]
+    eps = (
+        torch.randn(x0.shape, generator=generator, device=x0.device)
+        if generator
+        else torch.randn_like(x0)
+    )
     return m * x0 + sig * eps
 
 
@@ -59,7 +63,7 @@ def build_dataframe(
     if rng_seed is not None:
         g.manual_seed(rng_seed)
 
-    pts   = torch.from_numpy(x0).to(device)
+    pts = torch.from_numpy(x0).to(device)
     times = torch.linspace(eps, 1.0, n_frames, device=device)
 
     frames = [
@@ -67,7 +71,7 @@ def build_dataframe(
         for t in times
     ]
 
-    stacked   = np.concatenate(frames, axis=0)
+    stacked = np.concatenate(frames, axis=0)
     frame_idx = np.repeat(np.arange(n_frames), pts.size(0))
     return pd.DataFrame(
         dict(x=stacked[:, 0], y=stacked[:, 1], z=stacked[:, 2], frame=frame_idx)
@@ -83,8 +87,14 @@ def animate(
 ) -> None:
     """Save Plotly HTML animation with fixed axes that include all points."""
     fig = px.scatter_3d(
-        df, x="x", y="y", z="z", animation_frame="frame",
-        range_x=list(range_x), range_y=list(range_y), range_z=list(range_z),
+        df,
+        x="x",
+        y="y",
+        z="z",
+        animation_frame="frame",
+        range_x=list(range_x),
+        range_y=list(range_y),
+        range_z=list(range_z),
         opacity=0.7,
     )
     fig.update_traces(marker=dict(size=2))
@@ -103,17 +113,21 @@ def animate(
 # ----------------------------------------------------------------------
 def main() -> None:
     p = argparse.ArgumentParser(description="Visualise forward VP-SDE.")
-    p.add_argument("--data",   type=Path, required=True,
-                   help="Whitened *.npy point cloud")
-    p.add_argument("--stats",  type=Path,
-                   help="Whitening stats JSON to un-whiten before animating")
-    p.add_argument("--out",    type=Path, default=Path("animation.html"))
-    p.add_argument("--frames", type=int,  default=100)
-    p.add_argument("--sample", type=int,  default=3000,
-                   help="Sub-sample size (≤N, use N if <=0)")
-    p.add_argument("--seed",   type=int,  default=42)
-    p.add_argument("--pad",    type=float, default=0.05,
-                   help="Fractional padding on axis limits")
+    p.add_argument(
+        "--data", type=Path, required=True, help="Whitened *.npy point cloud"
+    )
+    p.add_argument(
+        "--stats", type=Path, help="Whitening stats JSON to un-whiten before animating"
+    )
+    p.add_argument("--out", type=Path, default=Path("animation.html"))
+    p.add_argument("--frames", type=int, default=100)
+    p.add_argument(
+        "--sample", type=int, default=3000, help="Sub-sample size (≤N, use N if <=0)"
+    )
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument(
+        "--pad", type=float, default=0.05, help="Fractional padding on axis limits"
+    )
     args = p.parse_args()
 
     # ----- load (and un-whiten) -----
