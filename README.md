@@ -3,7 +3,7 @@
 <!-- CI badge will be added here after you configure GitHub Actions -->
 <!-- Coverage badge will be added here after you integrate Codecov -->
 
-A minimal, type-annotated reference implementation of score-based generative modeling for the Lorenz‑63 attractor in ℝ³. This repository demonstrates:
+A minimal, type-annotated reference implementation of score-based generative modeling for the Lorenz‑63 attractor in $\mathbb{R}^3$. This repository demonstrates:
 
 - Data generation of invariant-measure samples via forward SDE simulation.
 - Training a denoising score network through denoising score matching.
