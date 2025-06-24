@@ -1,14 +1,15 @@
-# lorenz-score-sde
+# lorenz-score-sde  
+A minimal, type-annotated PyTorch reference implementation of score-based generative modeling on the Lorenz-63 attractor in ℝ³.
 
-<!-- CI badge will be added here after you configure GitHub Actions -->
-<!-- Coverage badge will be added here after you integrate Codecov -->
+[![CI](https://github.com/sbdeery/lorenz-score-sde/workflows/CI/badge.svg)]()  
+[![Coverage](https://codecov.io/gh/sbdeery/lorenz-score-sde/branch/main/graph/badge.svg)]()
 
-A minimal, type-annotated reference implementation of score-based generative modeling for the Lorenz‑63 attractor in $\mathbb{R}^3$. This repository demonstrates:
+A reference pipeline for:
 
-- Data generation of invariant-measure samples via forward SDE simulation.
-- Training a denoising score network through denoising score matching.
-- Sampling using Predictor–Corrector SDE solvers.
-- Evaluation of sample fidelity via marginal distribution metrics.
+- Data generation via forward SDE simulation.
+- Training a denoising score network.
+- Sampling with Predictor–Corrector SDE solvers.
+- Evaluating sample fidelity through marginal metrics.
 
 ## Table of Contents
 
@@ -17,74 +18,73 @@ A minimal, type-annotated reference implementation of score-based generative mod
 - [Examples](#examples)
 - [Development](#development)
 - [Citation](#citation)
+- [License](#license)
 - [Contact](#contact)
 
 ## Installation
 
-Clone the repository and install runtime dependencies:
-
 ```bash
-git clone https://github.com/sbdeery/lorenz-score-modeling.git
-cd lorenz-score-modeling
-python3 -m venv .venv
-source .venv/bin/activate
+git clone https://github.com/sbdeery/lorenz-score-sde.git
+cd lorenz-score-sde
+python3 -m venv .venv && source .venv/bin/activate
 pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-Install developer tools for formatting, linting, and type checking:
-
-```bash
-pip install -r requirements-dev.txt
+pip install .[dev]
 ```
 
 ## Usage
 
-### Data Generation
+Generate data, train, sample, and evaluate:
 
 ```bash
+make all
+```
+
+Or step by step:
+
+```bash
+# Data
 python -m data.make_data --dist lorenz --outdir data
-```
 
-### Training
+# Train
+python -m scripts.train --data data/lorenz_train_norm.npy --outdir outputs --epochs 100 --batch-size 512
 
-```bash
-python -m scripts.train   --data data/lorenz_train_norm.npy   --outdir outputs   --epochs 100   --batch-size 512
-```
+# Sample
+python -m scripts.sample --ckpt outputs/ckpts/e50.pt --n 150000 --sample_type pc --out outputs/pc_samples.npz
 
-### Sampling
-
-```bash
-python -m scripts.sample   --ckpt outputs/ckpts/e50.pt   --n 150000   --sample_type pc   --out outputs/pc_samples.npz
-```
-
-### Evaluation
-
-```bash
-python -m scripts.eval_marginals   --data data/lorenz_train_norm.npy   --samples outputs/pc_samples.npz   --stats data/lorenz_stats.json   --outdir outputs/marginals   --bins 150
+# Evaluate
+python -m scripts.eval_marginals --data data/lorenz_train_norm.npy --samples outputs/pc_samples.npz --stats data/lorenz_stats.json --outdir outputs/marginals --bins 150
 ```
 
 ## Examples
 
-See `examples/minimal_demo.ipynb` for a complete walkthrough of data generation, training, sampling, and evaluation.
+View the minimal demo: `examples/minimal_demo.ipynb`  
+Try it on [Binder](https://mybinder.org/v2/gh/sbdeery/lorenz-score-sde/main).
 
 ## Development
 
-- **Formatting & Linting:**
-  ```bash
-  black .
-  isort .
-  flake8 .
-  mypy .
-  ```
+```bash
+black .
+isort .
+flake8 .
+mypy .
+```
 
 ## Citation
 
-If you use this code, please cite:
+```bibtex
+@inproceedings{song2021score,
+  title={Score-Based Generative Modeling through Stochastic Differential Equations},
+  author={Song, Yang and Ermon, Stefano},
+  booktitle={ICLR},
+  year={2021}
+}
+```
 
-Song, Yang and Ermon, Stefano. *Score-Based Generative Modeling through Stochastic Differential Equations*. ICLR 2021.
+## License
+
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contact
 
 Maintainer: Sebastian Deery  
-Email: sbdeery@uchicago.edu
+Email: sbdeery@uchicago.edu  
