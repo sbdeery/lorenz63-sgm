@@ -7,6 +7,8 @@ __pycache__/
 .env/
 venv/
 env/
+.venv/           
+.mypy_cache/
 
 # Data files
 data/
@@ -14,3 +16,5 @@ outputs/
 
 # Logs
 *.log
+
+.DS_Store
