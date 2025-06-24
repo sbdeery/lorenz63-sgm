@@ -18,44 +18,44 @@ A reference pipeline for:
 - [License](#license)
 - [Contact](#contact)
 
-## Installation
-
 ```bash
+# 1. Clone and enter the repo
 git clone https://github.com/sbdeery/lorenz-score-sde.git
 cd lorenz-score-sde
-python3 -m venv .venv && source .venv/bin/activate
+
+# 2. Create an isolated environment (recommended)
+python -m venv .venv            # or `conda create -n lorenzscore python=3.11`
+source .venv/bin/activate       # on Windows: .venv\Scripts\activate
+
+# 3. Upgrade pip and install runtime requirements
 pip install --upgrade pip
-pip install .[dev]
+pip install -r requirements.txt
+
+# 4. (Optional) install developer tools—linters, Black, MyPy, etc.
+pip install -r requirements-dev.txt
 ```
 
 ## Usage
 
-Generate data, train, sample, and evaluate:
-
-```bash
-make all
-```
-
-Or step by step:
+Step by step:
 
 ```bash
 # Data
 python -m data.make_data --dist lorenz --outdir data
 
 # Train
-python -m scripts.train --data data/lorenz_train_norm.npy --outdir outputs --epochs 100 --batch-size 512
+python -m scripts.train --data data/lorenz_train_norm.npy
 
 # Sample
-python -m scripts.sample --ckpt outputs/ckpts/e50.pt --n 150000 --sample_type pc --out outputs/pc_samples.npz
+python -m scripts.sample --ckpt outputs/ckpts/e50.pt --n 150000 --sample_type pc --outfile outputs/pc_samples.npz
 
 # Evaluate
-python -m scripts.eval_marginals --data data/lorenz_train_norm.npy --samples outputs/pc_samples.npz --stats data/lorenz_stats.json --outdir outputs/marginals --bins 150
+python -m scripts.eval_marginals --data data/lorenz_train_norm.npy --samples outputs/pc_samples.npz --stats data/lorenz_stats.json
 ```
 
 ## Examples
 
-View the minimal demo: `examples/minimal_demo.ipynb`  
-Try it on [Binder](https://mybinder.org/v2/gh/sbdeery/lorenz-score-sde/main).
+View the minimal demo: `examples/minimal_demo.ipynb`
 
 ## Development
 

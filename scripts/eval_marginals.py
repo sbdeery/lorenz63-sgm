@@ -121,7 +121,7 @@ def main() -> None:
         help="JSON with whitening stats to un-whiten before evaluation",
     )
     p.add_argument("--outdir", type=Path, default=Path("outputs/marginals"))
-    p.add_argument("--bins", type=int, default=100)
+    p.add_argument("--bins", type=int, default=150)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--max_true", type=int)
     p.add_argument("--max_gen", type=int)

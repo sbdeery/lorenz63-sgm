@@ -1,0 +1,5 @@
+epoch,split,metric,value
+1,train,loss,0.8299652338027954
+1,val,loss,1.992580045890808
+2,train,loss,0.5530411601066589
+2,val,loss,1.0211144598388673
