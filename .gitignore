@@ -1,20 +1,38 @@
-# Byte-compiled / optimized
+# Byte-compiled / optimized Python files
 __pycache__/
 *.py[cod]
 *.so
 
-# Virtual env
-.env/
-venv/
+# Virtual environments
+.venv/
 env/
-.venv/           
+venv/
+.env/
+
+# MyPy cache
 .mypy_cache/
 
-# Data files
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Data and output directories
 data/
 outputs/
 
 # Logs
 *.log
 
+# macOS
 .DS_Store
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# pytest cache and coverage
+.pytest_cache/
+.coverage
+
+# Temporary files
+*.tmp
+*.swp
