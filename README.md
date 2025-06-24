@@ -1,8 +1,5 @@
 # lorenz-score-sde  
-A minimal, type-annotated PyTorch reference implementation of score-based generative modeling on the Lorenz-63 attractor in ℝ³.
-
-[![CI](https://github.com/sbdeery/lorenz-score-sde/workflows/CI/badge.svg)]()  
-[![Coverage](https://codecov.io/gh/sbdeery/lorenz-score-sde/branch/main/graph/badge.svg)]()
+A minimal, type-annotated PyTorch reference implementation of score-based generative modeling on the Lorenz-63 attractor in $\mathbb{R}^3$.
 
 A reference pipeline for:
 
