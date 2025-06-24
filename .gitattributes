@@ -1,0 +1,9 @@
+# .gitattributes
+
+# Mark generated data and assets as generated (excluded from language stats)
+*.html        linguist-generated=true
+*.csv         linguist-generated=true
+*.json        linguist-generated=true
+*.png         linguist-generated=true
+*.pt          linguist-generated=true
+*.npz         linguist-generated=true
