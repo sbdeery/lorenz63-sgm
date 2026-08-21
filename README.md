@@ -4,7 +4,7 @@ A compact PyTorch research implementation of score-based generative modeling on 
 
 ## What is included
 
-- Lorenz-63 simulation, whitening, and reproducible data-generation utilities
+- Lorenz-63 simulation, whitening, and data-generation utilities
 - A time-conditioned MLP score model trained with VP-SDE score matching
 - Predictor-Corrector, Euler-Maruyama, and probability-flow ODE samplers
 - Marginal-fidelity diagnostics using KS, Wasserstein-1, and KDE-based comparisons
