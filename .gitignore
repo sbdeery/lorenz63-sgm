@@ -15,8 +15,9 @@ venv/
 # Jupyter notebook checkpoints
 .ipynb_checkpoints/
 
-# Data and output directories
-data/
+# Generated data and outputs
+data/*.npy
+data/*_stats.json
 outputs/
 
 # Logs
